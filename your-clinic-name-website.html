@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Clinic Name — Premium Dental Care</title>
+<meta name="description" content="Your Clinic Name offers cosmetic dentistry, implants, and orthodontics in a calm, design-led clinic.">
+<meta property="og:title" content="Your Clinic Name — Premium Dental Care">
+<meta property="og:description" content="Cosmetic dentistry, implants, and orthodontics in a calm, design-led clinic.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0B2E33">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   YOUR CLINIC NAME — Design tokens
+   Palette
+     --ink     #0B2E33  deep teal-ink (primary dark surface)
+     --ivory   #FAF8F3  warm ivory (primary light surface)
+     --gold    #C6A664  clinical gold (signature accent)
+     --sage    #7FA895  soft clinical sage (secondary accent)
+     --charcoal#1B2422  text on light
+     --mist    #E7E2D8  hairline / divider on light
+   Type
+     Display : 'Fraunces'      — warm, slightly eccentric serif, used large & sparingly
+     Body    : 'Manrope'       — clean geometric sans for reading
+     Utility : 'IBM Plex Mono' — small caps / labels / data
+   Signature
+     The "Smile Line" — a single continuous SVG arc that draws itself on load
+     and reappears as a section divider / underline throughout the site.
+   ============================================================ */
+
+:root{
+  --ink: #0B2E33;
+  --ink-2: #103C42;
+  --ivory: #FAF8F3;
+  --ivory-2: #F2EEE3;
+  --gold: #C6A664;
+  --gold-2: #DCC08A;
+  --sage: #7FA895;
+  --charcoal: #1B2422;
+  --mist: #E7E2D8;
+  --white: #ffffff;
+
+  --font-display: 'Fraunces', 'Georgia', serif;
+  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --container: 1240px;
+  --radius: 18px;
+  --radius-sm: 10px;
+
+  --ease: cubic-bezier(.22,1,.36,1);
+  --shadow-soft: 0 20px 60px -20px rgba(11,46,51,.25);
+  --shadow-lift: 0 30px 80px -25px rgba(11,46,51,.35);
+}
+
+*,*::before,*::after{ box-sizing: border-box; }
+html{ scroll-behavior: auto; }
+body{
+  margin:0;
+  background: var(--ivory);
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+ul{ list-style:none; margin:0; padding:0; }
+h1,h2,h3,h4{ font-family: var(--font-display); font-weight:600; margin:0; letter-spacing:-.01em; }
+p{ margin:0; }
+button{ font-family:inherit; cursor:pointer; }
+
+::selection{ background: var(--gold); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
+
+/* focus states */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.container{ max-width: var(--container); margin:0 auto; padding: 0 32px; }
+.eyebrow{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--sage);
+  display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{ content:''; width:26px; height:1px; background: var(--gold); display:inline-block; }
+
+section{ position: relative; }
+.section-pad{ padding: 128px 0; }
+@media(max-width:900px){ .section-pad{ padding: 84px 0; } }
+
+/* ---------- Loading screen ---------- */
+#loader{
+  position:fixed; inset:0; z-index:9999;
+  background: var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  transition: opacity .8s var(--ease), visibility .8s var(--ease);
+}
+#loader.done{ opacity:0; visibility:hidden; pointer-events:none; }
+.loader-mark{ position:relative; width:220px; text-align:center; }
+.loader-mark svg{ width:120px; height:60px; }
+.loader-mark path{
+  fill:none; stroke: var(--gold); stroke-width:2.2; stroke-linecap:round;
+  stroke-dasharray: 300; stroke-dashoffset: 300;
+  animation: draw 1.6s var(--ease) forwards;
+}
+@keyframes draw{ to{ stroke-dashoffset:0; } }
+.loader-word{
+  margin-top:18px; font-family: var(--font-mono); letter-spacing:.3em; font-size:11px;
+  color: var(--ivory-2); text-transform:uppercase; opacity:.7;
+}
+
+/* ---------- Custom cursor ---------- */
+.cursor-dot, .cursor-ring{
+  position: fixed; top:0; left:0; pointer-events:none; z-index:9998;
+  border-radius:50%; transform: translate(-50%,-50%);
+}
+.cursor-dot{ width:6px; height:6px; background: var(--gold); }
+.cursor-ring{
+  width:34px; height:34px; border:1px solid rgba(198,166,100,.55);
+  transition: width .25s var(--ease), height .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+}
+.cursor-ring.grow{ width:64px; height:64px; background: rgba(198,166,100,.08); border-color: var(--gold); }
+@media(max-width:900px){ .cursor-dot,.cursor-ring{ display:none; } }
+
+/* ---------- Ambient canvas ---------- */
+#ambient{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.55; }
+
+/* ---------- Nav ---------- */
+.nav{
+  position: fixed; top:0; left:0; right:0; z-index: 1000;
+  padding: 22px 0;
+  transition: padding .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease);
+}
+.nav.scrolled{
+  padding: 12px 0;
+  background: rgba(250,248,243,.75);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: 0 1px 0 rgba(27,36,34,.06);
+}
+.nav .container{ display:flex; align-items:center; justify-content:space-between; }
+.logo{ display:flex; align-items:center; gap:10px; }
+.logo-mark{ width:30px; height:30px; }
+.logo-mark path{ fill:none; stroke: var(--ink); stroke-width:2.4; stroke-linecap:round; }
+.logo-text{
+  font-family: var(--font-display); font-size: 20px; font-weight:600; color: var(--ink);
+  letter-spacing:-.01em;
+}
+.nav-links{ display:flex; align-items:center; gap:38px; }
+.nav-links a{
+  font-size:14px; font-weight:600; color: var(--charcoal); position:relative; padding:4px 0;
+}
+.nav-links a::after{
+  content:''; position:absolute; left:0; bottom:-2px; height:1px; width:0%;
+  background: var(--gold); transition: width .35s var(--ease);
+}
+.nav-links a:hover::after, .nav-links a.active::after{ width:100%; }
+.nav-links a.active{ color: var(--ink); }
+.nav-cta{
+  font-family: var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+  padding: 12px 22px; border-radius: 999px; background: var(--ink); color: var(--ivory);
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease);
+}
+.nav-cta:hover{ background: var(--gold); color: var(--ink); box-shadow: var(--shadow-soft); transform: translateY(-2px); }
+.nav-toggle{ display:none; }
+@media(max-width:900px){
+  .nav-links{
+    position: fixed; inset: 0 0 0 auto; width: min(78vw,340px); height:100vh;
+    background: var(--ink); flex-direction:column; align-items:flex-start; justify-content:center;
+    gap:26px; padding: 40px; transform: translateX(100%); transition: transform .5s var(--ease);
+  }
+  .nav-links.open{ transform: translateX(0); }
+  .nav-links a{ color: var(--ivory); font-size:20px; }
+  .nav-cta{ margin-top:10px; }
+  .nav-toggle{
+    display:flex; flex-direction:column; gap:5px; background:none; border:none; z-index:1100; padding:6px;
+  }
+  .nav-toggle span{ width:22px; height:2px; background: var(--ink); transition: all .3s var(--ease); }
+  .nav-toggle.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2){ opacity:0; }
+  .nav-toggle.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  position:relative; display:inline-flex; align-items:center; gap:10px;
+  padding: 16px 30px; border-radius: 999px; font-weight:700; font-size:14.5px;
+  border:1px solid transparent; transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  isolation:isolate;
+}
+.btn-primary{ background: var(--ink); color: var(--ivory); }
+.btn-primary:hover{ box-shadow: var(--shadow-soft); transform: translateY(-2px); }
+.btn-ghost{ border-color: rgba(27,36,34,.18); color: var(--charcoal); }
+.btn-ghost:hover{ border-color: var(--ink); transform: translateY(-2px); }
+.btn-gold{ background: var(--gold); color: var(--ink); }
+.btn-gold:hover{ box-shadow: 0 20px 50px -18px rgba(198,166,100,.65); transform: translateY(-2px); }
+.btn svg{ width:16px; height:16px; transition: transform .3s var(--ease); }
+.btn:hover svg{ transform: translate(3px,-3px); }
+
+/* ---------- Glass card ---------- */
+.glass{
+  background: rgba(255,255,255,.6);
+  border: 1px solid rgba(255,255,255,.5);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+.glass-dark{
+  background: rgba(16,60,66,.55);
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: var(--radius);
+}
+
+/* ---------- Hero ---------- */
+.hero{
+  min-height: 100vh; display:flex; align-items:center;
+  padding: 160px 0 100px;
+  background:
+    radial-gradient(1100px 550px at 82% -10%, rgba(198,166,100,.20), transparent 60%),
+    radial-gradient(900px 500px at 8% 110%, rgba(127,168,149,.20), transparent 60%),
+    var(--ivory);
+  overflow:hidden;
+}
+.hero-grid{ display:grid; grid-template-columns: 1.05fr .95fr; gap: 60px; align-items:center; }
+.hero-eyebrow{ margin-bottom:22px; }
+.hero h1{
+  font-size: clamp(42px, 5.6vw, 78px); line-height: .98; color: var(--ink);
+}
+.hero h1 em{ font-style: normal; color: var(--gold); position:relative; }
+.hero-sub{
+  margin-top: 26px; font-size: 18px; color: rgba(27,36,34,.75); max-width: 480px;
+}
+.hero-actions{ display:flex; gap:16px; margin-top:40px; flex-wrap:wrap; }
+.hero-stats{ display:flex; gap:38px; margin-top:64px; flex-wrap:wrap; }
+.stat b{ display:block; font-family: var(--font-display); font-size: 34px; color: var(--ink); }
+.stat span{ font-family: var(--font-mono); font-size:11.5px; letter-spacing:.1em; color: rgba(27,36,34,.55); text-transform:uppercase; }
+
+.smile-wrap{ position:relative; }
+.smile-wrap svg{ width:100%; height:auto; }
+.smile-path{
+  fill:none; stroke: var(--ink); stroke-width:1.6; opacity:.18;
+}
+.smile-path.active{ stroke: var(--gold); opacity:1; stroke-dasharray: 900; stroke-dashoffset: 900; }
+
+.hero-visual{ position:relative; }
+.hero-photo{
+  position:relative; border-radius: 28px; overflow:hidden; box-shadow: var(--shadow-lift);
+  aspect-ratio: 4/5;
+}
+.hero-photo img{ width:100%; height:100%; object-fit:cover; transform: scale(1.08); }
+.float-card{
+  position:absolute; padding:18px 20px; display:flex; align-items:center; gap:14px; z-index:3;
+}
+.float-card.c1{ top:8%; left:-14%; }
+.float-card.c2{ bottom:10%; left:-10%; }
+.float-icon{
+  width:40px; height:40px; border-radius:50%; background: var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.float-icon svg{ width:18px; height:18px; stroke: var(--ink); }
+.float-card b{ display:block; font-family: var(--font-display); font-size:17px; color: var(--ink); }
+.float-card span{ font-size:12px; color: rgba(27,36,34,.6); }
+@media(max-width:1024px){
+  .hero-grid{ grid-template-columns:1fr; }
+  .float-card.c1{ left:-4%; } .float-card.c2{ left:auto; right:-4%; }
+}
+@media(max-width:640px){
+  .float-card{ padding:12px 14px; }
+  .float-card b{ font-size:14px; }
+  .hero-actions{ flex-direction:column; align-items:stretch; }
+}
+
+/* ---------- Section headers ---------- */
+.section-head{ max-width: 640px; margin-bottom: 64px; }
+.section-head h2{ font-size: clamp(30px,3.6vw,48px); color: var(--ink); margin-top:16px; }
+.section-head p{ margin-top:18px; color: rgba(27,36,34,.7); font-size:16.5px; }
+.section-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+.section-head.center .eyebrow{ justify-content:center; }
+.section-head.center .eyebrow::before{ display:none; }
+
+/* divider */
+.divider{ padding: 40px 0; opacity:.5; }
+.divider svg{ width:100%; height:24px; }
+.divider path{ fill:none; stroke: var(--mist); stroke-width:1; }
+
+/* ---------- About / values ---------- */
+.about-grid{ display:grid; grid-template-columns: .9fr 1.1fr; gap:80px; align-items:center; }
+.about-photo{ position:relative; border-radius:24px; overflow:hidden; box-shadow: var(--shadow-soft); }
+.about-photo img{ aspect-ratio:3/4; object-fit:cover; }
+.timeline{ margin-top: 20px; }
+.tl-item{ display:grid; grid-template-columns: 70px 1fr; gap:22px; padding: 22px 0; border-top: 1px solid var(--mist); }
+.tl-item:last-child{ border-bottom: 1px solid var(--mist); }
+.tl-year{ font-family: var(--font-mono); font-size:13px; color: var(--gold); padding-top:2px; }
+.tl-item h4{ font-size:18px; color: var(--ink); }
+.tl-item p{ margin-top:6px; color: rgba(27,36,34,.7); font-size:14.5px; }
+
+.values-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:22px; margin-top:70px; }
+.value-card{ padding:30px 24px; border-radius: var(--radius); background: var(--white); border:1px solid var(--mist); transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease); }
+.value-card:hover{ transform: translateY(-6px); box-shadow: var(--shadow-soft); border-color: transparent; }
+.value-num{ font-family: var(--font-mono); font-size:12px; color: var(--sage); }
+.value-card h4{ margin-top:14px; font-size:19px; color: var(--ink); }
+.value-card p{ margin-top:10px; font-size:14px; color: rgba(27,36,34,.65); }
+@media(max-width:1024px){ .about-grid{ grid-template-columns:1fr; } .values-grid{ grid-template-columns: repeat(2,1fr); } }
+@media(max-width:560px){ .values-grid{ grid-template-columns:1fr; } }
+
+/* ---------- Counters strip ---------- */
+.counter-strip{
+  background: var(--ink); color: var(--ivory); border-radius: 28px;
+  padding: 56px 40px; display:grid; grid-template-columns: repeat(4,1fr); gap:20px; text-align:center;
+}
+.counter-strip .stat b{ color: var(--gold); font-size:42px; }
+.counter-strip .stat span{ color: rgba(250,248,243,.6); }
+@media(max-width:760px){ .counter-strip{ grid-template-columns: repeat(2,1fr); } }
+
+/* ---------- Services ---------- */
+.services-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:26px; }
+.svc-card{
+  position:relative; padding: 34px 30px; border-radius: var(--radius); background: var(--white);
+  border: 1px solid var(--mist); overflow:hidden; cursor:pointer;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.svc-card:hover{ transform: translateY(-8px); box-shadow: var(--shadow-lift); }
+.svc-card::before{
+  content:''; position:absolute; inset:0; opacity:0; transition: opacity .4s var(--ease);
+  background: linear-gradient(160deg, rgba(198,166,100,.12), transparent 60%);
+}
+.svc-card:hover::before{ opacity:1; }
+.svc-icon{
+  width:54px; height:54px; border-radius:16px; background: var(--ivory-2); display:flex; align-items:center; justify-content:center;
+  margin-bottom:22px; transition: background .4s var(--ease), transform .4s var(--ease);
+}
+.svc-card:hover .svc-icon{ background: var(--gold); transform: rotate(-6deg) scale(1.06); }
+.svc-icon svg{ width:24px; height:24px; stroke: var(--ink); }
+.svc-card h3{ font-size:20px; color: var(--ink); }
+.svc-card p{ margin-top:10px; font-size:14.5px; color: rgba(27,36,34,.65); }
+.svc-more{
+  margin-top:20px; display:flex; align-items:center; gap:8px; font-family: var(--font-mono); font-size:11.5px;
+  letter-spacing:.08em; text-transform:uppercase; color: var(--gold);
+}
+.svc-detail{
+  max-height:0; overflow:hidden; transition: max-height .5s var(--ease), margin .5s var(--ease);
+}
+.svc-card.open .svc-detail{ max-height:200px; margin-top:16px; }
+.svc-detail ul{ display:flex; flex-direction:column; gap:8px; }
+.svc-detail li{ font-size:13.5px; color: rgba(27,36,34,.7); padding-left:18px; position:relative; }
+.svc-detail li::before{ content:'—'; position:absolute; left:0; color: var(--gold); }
+@media(max-width:1024px){ .services-grid{ grid-template-columns: repeat(2,1fr); } }
+@media(max-width:640px){ .services-grid{ grid-template-columns: 1fr; } }
+
+/* ---------- Gallery ---------- */
+.filter-row{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:44px; }
+.filter-btn{
+  padding: 10px 20px; border-radius:999px; border:1px solid var(--mist); background:transparent;
+  font-size:13.5px; font-weight:600; color: rgba(27,36,34,.65); transition: all .3s var(--ease);
+}
+.filter-btn.active, .filter-btn:hover{ background: var(--ink); color: var(--ivory); border-color: var(--ink); }
+.masonry{ column-count:3; column-gap:22px; }
+.masonry-item{
+  break-inside:avoid; margin-bottom:22px; border-radius: var(--radius); overflow:hidden; position:relative;
+  cursor:pointer; box-shadow: var(--shadow-soft); opacity:0; transform: translateY(30px); transition: opacity .1s, transform .1s;
+}
+.masonry-item.show{ opacity:1; transform:none; transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.masonry-item.hide{ display:none; }
+.masonry-item img{ width:100%; transition: transform .6s var(--ease); }
+.masonry-item:hover img{ transform: scale(1.08); }
+.mi-tag{
+  position:absolute; left:16px; bottom:16px; padding:7px 14px; border-radius:999px; font-size:11.5px;
+  font-family: var(--font-mono); letter-spacing:.05em; text-transform:uppercase; color:var(--ivory); background: rgba(11,46,51,.65);
+  backdrop-filter: blur(6px);
+}
+@media(max-width:900px){ .masonry{ column-count:2; } }
+@media(max-width:560px){ .masonry{ column-count:1; } }
+
+/* before/after */
+.ba-wrap{ position:relative; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-soft); user-select:none; aspect-ratio: 16/10; margin-top:60px; }
+.ba-wrap img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.ba-after{ clip-path: inset(0 0 0 50%); }
+.ba-handle{
+  position:absolute; top:0; bottom:0; left:50%; width:3px; background: var(--gold); cursor:ew-resize; z-index:5;
+  transform: translateX(-50%);
+}
+.ba-handle::after{
+  content:'↔'; position:absolute; top:50%; left:50%; transform: translate(-50%,-50%); width:46px; height:46px; border-radius:50%;
+  background: var(--gold); color: var(--ink); display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow: var(--shadow-soft);
+}
+.ba-label{ position:absolute; bottom:16px; font-family: var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:6px 12px; background: rgba(11,46,51,.65); color:var(--ivory); border-radius:999px; }
+.ba-label.before{ left:16px; } .ba-label.after{ right:16px; }
+
+/* lightbox */
+#lightbox{
+  position:fixed; inset:0; background: rgba(11,46,51,.92); z-index: 5000; display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition: opacity .4s var(--ease), visibility .4s var(--ease);
+}
+#lightbox.open{ opacity:1; visibility:visible; }
+#lightbox img{ max-width:88vw; max-height:82vh; border-radius:16px; box-shadow: var(--shadow-lift); }
+#lightbox .lb-close{ position:absolute; top:28px; right:34px; color: var(--ivory); font-size:28px; background:none; border:none; }
+
+/* ---------- Latest Updates ---------- */
+.updates-shell{ position:relative; }
+.updates-stage{ display:grid; grid-template-columns: 1.2fr .8fr; gap:0; border-radius: 26px; overflow:hidden; box-shadow: var(--shadow-lift); background: var(--ink); }
+.updates-media{ position:relative; aspect-ratio: 16/10; background:#04181b; }
+.updates-media video, .updates-media img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; opacity:0; transition: opacity .8s var(--ease); }
+.updates-media video.show, .updates-media img.show{ opacity:1; }
+.updates-media .play-badge{
+  position:absolute; top:20px; left:20px; display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px;
+  background: rgba(198,166,100,.9); color: var(--ink); font-family: var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+}
+.updates-media .live-dot{ width:7px; height:7px; border-radius:50%; background: var(--ink); animation: pulse 1.6s infinite; }
+@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+.updates-info{ padding: 44px 40px; color: var(--ivory); display:flex; flex-direction:column; justify-content:center; gap:18px; }
+.updates-info .src-tag{ font-family: var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color: var(--gold); }
+.updates-info h3{ font-size: 26px; }
+.updates-info p{ color: rgba(250,248,243,.72); font-size:14.5px; }
+.updates-meta{ display:flex; gap:18px; font-family: var(--font-mono); font-size:11.5px; color: rgba(250,248,243,.55); }
+.updates-dots{ display:flex; gap:8px; margin-top:6px; }
+.udot{ width:8px; height:8px; border-radius:50%; background: rgba(250,248,243,.25); transition: background .3s var(--ease), transform .3s var(--ease); cursor:pointer; }
+.udot.active{ background: var(--gold); transform: scale(1.25); }
+@media(max-width:900px){ .updates-stage{ grid-template-columns:1fr; } }
+
+/* ---------- Testimonials ---------- */
+.testi-track-wrap{ overflow:hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.testi-track{ display:flex; gap:22px; width:max-content; animation: scroll-x 42s linear infinite; }
+.testi-track:hover{ animation-play-state: paused; }
+@keyframes scroll-x{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+.testi-card{ width: 360px; padding: 28px; border-radius: var(--radius); flex-shrink:0; }
+.testi-stars{ display:flex; gap:3px; color: var(--gold); }
+.testi-card p{ margin-top:16px; font-size:15px; color: var(--charcoal); line-height:1.65; }
+.testi-person{ display:flex; align-items:center; gap:12px; margin-top:22px; }
+.testi-person img{ width:44px; height:44px; border-radius:50%; object-fit:cover; }
+.testi-person b{ display:block; font-size:14px; color: var(--ink); }
+.testi-person span{ font-size:12px; color: rgba(27,36,34,.55); }
+
+/* ---------- Team ---------- */
+.team-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:24px; }
+.team-card{ position:relative; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-soft); }
+.team-photo{ aspect-ratio: 3/4; overflow:hidden; }
+.team-photo img{ width:100%; height:100%; object-fit:cover; transition: transform .5s var(--ease); }
+.team-card:hover .team-photo img{ transform: scale(1.08); }
+.team-info{ padding: 20px; background: var(--white); }
+.team-info h4{ font-size:17px; color:var(--ink); }
+.team-info span{ font-size:12.5px; color: var(--sage); font-family: var(--font-mono); }
+.team-social{ display:flex; gap:10px; margin-top:12px; }
+.team-social a{ width:30px; height:30px; border-radius:50%; border:1px solid var(--mist); display:flex; align-items:center; justify-content:center; transition: all .3s var(--ease); }
+.team-social a:hover{ background: var(--ink); border-color: var(--ink); }
+.team-social svg{ width:13px; height:13px; stroke: var(--ink); transition: stroke .3s var(--ease); }
+.team-social a:hover svg{ stroke: var(--ivory); }
+@media(max-width:1024px){ .team-grid{ grid-template-columns: repeat(2,1fr); } }
+
+/* ---------- Contact ---------- */
+.contact-grid{ display:grid; grid-template-columns: .85fr 1.15fr; gap: 60px; }
+.contact-info-card{ padding: 34px; display:flex; flex-direction:column; gap:26px; }
+.info-row{ display:flex; gap:16px; align-items:flex-start; }
+.info-icon{ width:42px; height:42px; border-radius:12px; background: var(--ivory-2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.info-icon svg{ width:19px; height:19px; stroke: var(--ink); }
+.info-row h4{ font-size:14.5px; color: var(--ink); }
+.info-row p{ font-size:13.5px; color: rgba(27,36,34,.65); margin-top:4px; }
+.quick-actions{ display:flex; gap:12px; margin-top:6px; flex-wrap:wrap; }
+.qa-btn{ display:flex; align-items:center; gap:8px; padding:12px 18px; border-radius:999px; font-size:13px; font-weight:700; }
+.qa-btn.whatsapp{ background:#25D366; color:#04381b; }
+.qa-btn.call{ background: var(--ink); color: var(--ivory); }
+.qa-btn svg{ width:15px; height:15px; }
+.hours-table{ margin-top:6px; }
+.hours-row{ display:flex; justify-content:space-between; padding:8px 0; border-top:1px solid var(--mist); font-size:13.5px; }
+.hours-row span:first-child{ color: var(--ink); font-weight:600; }
+.hours-row span:last-child{ color: rgba(27,36,34,.6); font-family: var(--font-mono); font-size:12.5px; }
+
+.form-card{ padding: 40px; }
+.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.field{ margin-bottom:20px; }
+.field label{ font-size:12.5px; font-family: var(--font-mono); letter-spacing:.05em; text-transform:uppercase; color: rgba(27,36,34,.55); }
+.field input, .field select, .field textarea{
+  margin-top:8px; width:100%; padding: 14px 16px; border-radius: 12px; border:1px solid var(--mist);
+  background: var(--white); font-family: var(--font-body); font-size:14.5px; color: var(--charcoal);
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+}
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(198,166,100,.15); }
+.field textarea{ resize: vertical; min-height:110px; }
+.form-note{ font-size:12px; color: rgba(27,36,34,.5); margin-top:10px; }
+.map-wrap{ margin-top:70px; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-soft); position:relative; }
+.map-wrap iframe{ width:100%; height:420px; border:0; filter: grayscale(.25) contrast(1.05); }
+@media(max-width:900px){ .contact-grid{ grid-template-columns:1fr; } .form-row{ grid-template-columns:1fr; } }
+
+/* ---------- CTA band ---------- */
+.cta-band{
+  border-radius: 28px; background: linear-gradient(135deg, var(--ink), var(--ink-2));
+  padding: 70px 60px; display:flex; align-items:center; justify-content:space-between; gap:30px; flex-wrap:wrap;
+  position:relative; overflow:hidden;
+}
+.cta-band::after{
+  content:''; position:absolute; inset:0; background: radial-gradient(500px 300px at 90% 10%, rgba(198,166,100,.25), transparent 60%);
+}
+.cta-band h2{ color: var(--ivory); font-size: clamp(26px,3vw,38px); max-width:480px; position:relative; }
+.cta-band .btn{ position:relative; }
+
+/* ---------- Footer ---------- */
+footer{ background: var(--ink); color: var(--ivory); padding: 90px 0 30px; position:relative; overflow:hidden; }
+footer::before{
+  content:''; position:absolute; inset:0; background: radial-gradient(700px 380px at 15% 0%, rgba(127,168,149,.14), transparent 60%);
+  animation: driftbg 14s ease-in-out infinite alternate;
+}
+@keyframes driftbg{ from{ transform: translateX(0);} to{ transform: translateX(40px);} }
+.footer-grid{ display:grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 50px; position:relative; }
+.footer-brand p{ margin-top:16px; font-size:14px; color: rgba(250,248,243,.6); max-width:280px; }
+.footer-social{ display:flex; gap:10px; margin-top:22px; }
+.footer-social a{ width:36px; height:36px; border-radius:50%; border:1px solid rgba(250,248,243,.18); display:flex; align-items:center; justify-content:center; transition: all .3s var(--ease); }
+.footer-social a:hover{ background: var(--gold); border-color: var(--gold); }
+.footer-social svg{ width:15px; height:15px; stroke: var(--ivory); }
+.footer-social a:hover svg{ stroke: var(--ink); }
+.footer-col h4{ font-family: var(--font-mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color: var(--gold); margin-bottom:18px; }
+.footer-col a, .footer-col p{ display:block; font-size:14px; color: rgba(250,248,243,.65); margin-bottom:12px; transition: color .3s var(--ease); }
+.footer-col a:hover{ color: var(--ivory); }
+.newsletter-row{ display:flex; margin-top:8px; border-radius:999px; overflow:hidden; border:1px solid rgba(250,248,243,.2); }
+.newsletter-row input{ flex:1; background:transparent; border:0; padding:12px 16px; color: var(--ivory); font-size:13.5px; }
+.newsletter-row input::placeholder{ color: rgba(250,248,243,.4); }
+.newsletter-row button{ background: var(--gold); color: var(--ink); border:0; padding:0 20px; font-weight:700; font-size:13px; }
+.footer-bottom{ margin-top:70px; padding-top:26px; border-top:1px solid rgba(250,248,243,.12); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; font-size:12.5px; color: rgba(250,248,243,.55); position:relative; }
+.footer-credit a{ color: var(--gold); font-weight:700; }
+.footer-credit a:hover{ text-decoration: underline; }
+@media(max-width:1024px){ .footer-grid{ grid-template-columns: 1fr 1fr; } }
+@media(max-width:560px){ .footer-grid{ grid-template-columns: 1fr; } .footer-bottom{ flex-direction:column; align-items:flex-start; } }
+
+/* ---------- Reveal utility ---------- */
+.reveal{ opacity:0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.in{ opacity:1; transform:none; }
+
+/* ---------- Page hero (inner pages) ---------- */
+.page-hero{ padding: 168px 0 90px; background: linear-gradient(180deg, var(--ivory-2), var(--ivory)); }
+.page-hero h1{ font-size: clamp(36px,5vw,64px); color: var(--ink); margin-top:16px; }
+.page-hero p{ margin-top:18px; max-width:560px; color: rgba(27,36,34,.7); font-size:16.5px; }
+.breadcrumb{ font-family: var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color: rgba(27,36,34,.45); margin-top:22px; }
+.breadcrumb a{ color: var(--sage); }
+
+/* admin badge */
+.admin-badge{
+  position:fixed; bottom:22px; left:22px; z-index:900; display:flex; align-items:center; gap:8px;
+  padding:9px 14px; border-radius:999px; font-family: var(--font-mono); font-size:10.5px; letter-spacing:.05em;
+  text-transform:uppercase; box-shadow: var(--shadow-soft); opacity:.85;
+}
+.admin-badge .dot{ width:6px; height:6px; border-radius:50%; background: var(--sage); animation: pulse 2s infinite; }
+
+</style>
+</head>
+<body>
+
+  <div id="loader">
+    <div class="loader-mark">
+      <svg viewBox="0 0 120 60"><path d="M6 40 Q30 8 60 30 Q90 52 114 20"/></svg>
+      <div class="loader-word">Your Clinic Name</div>
+    </div>
+  </div>
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <canvas id="ambient"></canvas>
+
+
+  <nav class="nav">
+    <div class="container">
+      <a href="#home" class="logo">
+        <svg class="logo-mark" viewBox="0 0 30 30"><path d="M3 18 Q9 6 15 14 Q21 22 27 10"/></svg>
+        <span class="logo-text" data-clinic-name>Your Clinic Name</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#updates">Updates</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#contact" class="nav-cta">Book a Visit</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+<main>
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow hero-eyebrow">Cosmetic &amp; General Dentistry</div>
+      <h1>A smile is<br>the first thing<br>we <em>notice</em>.</h1>
+      <p class="hero-sub">Your Clinic Name pairs specialist-level dentistry with an
+      unhurried, design-led patient experience — every visit planned around your
+      comfort, not our schedule.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Book a Consultation
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+        </a>
+        <a href="#services" class="btn btn-ghost">Explore Services</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b data-count="18" data-suffix="+">0</b><span>Years in Practice</span></div>
+        <div class="stat"><b data-count="12400" data-suffix="+">0</b><span>Smiles Treated</span></div>
+        <div class="stat"><b data-count="4.9" data-suffix="/5">0</b><span>Patient Rating</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-photo">
+        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=1200&auto=format&fit=crop" alt="Dentist consulting a smiling patient at Your Clinic Name" loading="eager">
+      </div>
+      <div class="float-card glass c1">
+        <div class="float-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-8-6.5-8-11a5 5 0 019-3 5 5 0 019 3c0 4.5-4 8-10 11z"/></svg></div>
+        <div><b>Painless Care</b><span>Sedation-friendly clinic</span></div>
+      </div>
+      <div class="float-card glass c2">
+        <div class="float-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div><b>Same-Day Slots</b><span>Emergency-ready</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" style="padding-top:70px;padding-bottom:70px;">
+  <div class="container gsap-fade">
+    <div class="counter-strip">
+      <div class="stat"><b data-count="98" data-suffix="%">0</b><span>Would Refer a Friend</span></div>
+      <div class="stat"><b data-count="27" data-suffix="">0</b><span>Specialist Procedures</span></div>
+      <div class="stat"><b data-count="6" data-suffix="">0</b><span>In-House Specialists</span></div>
+      <div class="stat"><b data-count="0" data-suffix="hr wait">0</b><span>Average Chair Time</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="about">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Our Story</div>
+      <h2>Eighteen years of quietly obsessive dentistry.</h2>
+      <p>Your Clinic Name started as a single chair in 2008. Today we're a full specialist
+      practice — but the same rule still governs every appointment: explain first, treat second.</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-photo reveal">
+        <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1000&auto=format&fit=crop" alt="Interior of Your Clinic Name treatment room" loading="lazy">
+      </div>
+      <div>
+        <div class="eyebrow">Milestones</div>
+        <h3 class="reveal" style="margin-top:16px;font-size:clamp(26px,3vw,36px);color:var(--ink);font-family:var(--font-display);">How the clinic grew.</h3>
+        <div class="timeline">
+          <div class="tl-item reveal">
+            <div class="tl-year">2008</div>
+            <div><h4>A single-chair practice opens</h4><p>Dr. Rao begins seeing patients from a two-room office, focused entirely on general dentistry.</p></div>
+          </div>
+          <div class="tl-item reveal">
+            <div class="tl-year">2014</div>
+            <div><h4>Cosmetic &amp; implant wing added</h4><p>A second specialist joins to build out veneers, whitening, and implant surgery.</p></div>
+          </div>
+          <div class="tl-item reveal">
+            <div class="tl-year">2019</div>
+            <div><h4>Digital smile design introduced</h4><p>3D intraoral scanning replaces impressions across every treatment plan.</p></div>
+          </div>
+          <div class="tl-item reveal">
+            <div class="tl-year">2026</div>
+            <div><h4>Six specialists, one address</h4><p>Orthodontics, pediatric care, and sedation dentistry all under one roof.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" style="background:var(--ivory-2);">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="eyebrow">What Drives Us</div>
+      <h2>Mission, vision &amp; the values behind them.</h2>
+      <p>These aren't wall plaques — they're the checklist every treatment plan is measured against before it reaches you.</p>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal"><div class="value-num">Mission</div><h4>Care without compromise</h4><p>Deliver specialist-level dentistry with the warmth and clarity patients deserve.</p></div>
+      <div class="value-card reveal"><div class="value-num">Vision</div><h4>Redefine the visit</h4><p>Make the dental appointment something people stop dreading and start trusting.</p></div>
+      <div class="value-card reveal"><div class="value-num">Value</div><h4>Radical transparency</h4><p>Every cost, every risk, every alternative — explained before you decide.</p></div>
+      <div class="value-card reveal"><div class="value-num">Value</div><h4>Evidence over habit</h4><p>Techniques are reviewed annually against the latest published clinical research.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Meet The Team</div>
+      <h2>Specialists, not generalists.</h2>
+      <p>Every clinician here treats one or two things extremely well, instead of everything adequately.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=500&auto=format&fit=crop" alt="Dr. Ananya Rao" loading="lazy"></div>
+        <div class="team-info"><h4>Dr. Ananya Rao</h4><span>Founder · Cosmetic Dentistry</span>
+          <div class="team-social">
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c1.2-1.5 4-1.5 4 1v4"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=500&auto=format&fit=crop" alt="Dr. Kabir Singh" loading="lazy"></div>
+        <div class="team-info"><h4>Dr. Kabir Singh</h4><span>Implant &amp; Oral Surgery</span>
+          <div class="team-social">
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c1.2-1.5 4-1.5 4 1v4"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=500&auto=format&fit=crop" alt="Dr. Meera Nair" loading="lazy"></div>
+        <div class="team-info"><h4>Dr. Meera Nair</h4><span>Orthodontics</span>
+          <div class="team-social">
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c1.2-1.5 4-1.5 4 1v4"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="https://images.unsplash.com/photo-1651008376811-b90baee60c1f?q=80&w=500&auto=format&fit=crop" alt="Dr. Ishaan Kapoor" loading="lazy"></div>
+        <div class="team-info"><h4>Dr. Ishaan Kapoor</h4><span>Pediatric Dentistry</span>
+          <div class="team-social">
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 11v5M8 8v.01M12 16v-5M12 11c1.2-1.5 4-1.5 4 1v4"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="services" style="background:var(--ivory-2);">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="eyebrow">What We Treat</div>
+      <h2>Every service, delivered by an actual specialist.</h2>
+      <p>Tap any card to see what's included. Pricing and timelines are confirmed during your first consultation.</p>
+    </div>
+    <div class="services-grid">
+      
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21c-4-3-8-6.5-8-11a5 5 0 019-3 5 5 0 019 3c0 4.5-4 8-10 11z"/></svg></div>
+        <h3>Cosmetic Dentistry</h3>
+        <p>Veneers, bonding and whitening planned around your facial proportions.</p>
+        <div class="svc-more">View details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="svc-detail"><ul><li>Porcelain &amp; composite veneers</li><li>In-chair and take-home whitening</li><li>Digital smile preview before treatment</li></ul></div>
+      </div>
+      
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 12h6M12 9v6"/></svg></div>
+        <h3>Dental Implants</h3>
+        <p>Titanium and zirconia implants, often placed in a single visit.</p>
+        <div class="svc-more">View details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="svc-detail"><ul><li>Single-tooth &amp; full-arch implants</li><li>3D-guided surgical placement</li><li>Bone grafting when required</li></ul></div>
+      </div>
+      
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg></div>
+        <h3>Orthodontics</h3>
+        <p>Clear aligners and precision braces, tracked with 3D scanning.</p>
+        <div class="svc-more">View details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="svc-detail"><ul><li>Clear aligner therapy</li><li>Ceramic &amp; metal braces</li><li>Monthly progress scans</li></ul></div>
+      </div>
+      
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Preventive Care</h3>
+        <p>Routine checkups and cleanings that catch problems before they start.</p>
+        <div class="svc-more">View details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="svc-detail"><ul><li>Deep cleaning &amp; scaling</li><li>Digital cavity detection</li><li>Custom night guards</li></ul></div>
+      </div>
+      
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 5-6 8-6s7 2 8 6"/></svg></div>
+        <h3>Pediatric Dentistry</h3>
+        <p>A gentler first experience, built for anxious first-time patients.</p>
+        <div class="svc-more">View details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="svc-detail"><ul><li>First-visit orientation program</li><li>Sealants &amp; fluoride treatments</li><li>Sedation options for kids</li></ul></div>
+      </div>
+      
+      <div class="svc-card reveal">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v9M8 6l4-3 4 3M7 12c0 5 2 9 5 9s5-4 5-9"/></svg></div>
+        <h3>Root Canal &amp; Restorative</h3>
+        <p>Same-day crowns and pain-focused endodontic care.</p>
+        <div class="svc-more">View details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="svc-detail"><ul><li>Single-visit root canal therapy</li><li>Same-day ceramic crowns</li><li>Post-procedure comfort plan</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="gallery">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Inside The Clinic</div>
+      <h2>A look around, before you book.</h2>
+      <p>Our treatment rooms, our team, and a few of the results we're proudest of.</p>
+    </div>
+    <div class="filter-row reveal" style="justify-content:center;">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="clinic">Clinic</button>
+      <button class="filter-btn" data-filter="team">Team</button>
+      <button class="filter-btn" data-filter="results">Results</button>
+    </div>
+    <div class="masonry">
+      <div class="masonry-item" data-cat="clinic"><img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop" alt="Clinic at Your Clinic Name" loading="lazy"><span class="mi-tag">Clinic</span></div><div class="masonry-item" data-cat="results"><img src="https://images.unsplash.com/photo-1581585095852-6cb04e15fae8?q=80&w=800&auto=format&fit=crop" alt="Veneers at Your Clinic Name" loading="lazy"><span class="mi-tag">Veneers</span></div><div class="masonry-item" data-cat="clinic"><img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop" alt="Treatment Room at Your Clinic Name" loading="lazy"><span class="mi-tag">Treatment Room</span></div><div class="masonry-item" data-cat="team"><img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=800&auto=format&fit=crop" alt="Our Team at Your Clinic Name" loading="lazy"><span class="mi-tag">Our Team</span></div><div class="masonry-item" data-cat="results"><img src="https://images.unsplash.com/photo-1601412436405-926c25889a25?q=80&w=800&auto=format&fit=crop" alt="Whitening at Your Clinic Name" loading="lazy"><span class="mi-tag">Whitening</span></div><div class="masonry-item" data-cat="clinic"><img src="https://images.unsplash.com/photo-1629909615957-be38d48fbbe6?q=80&w=800&auto=format&fit=crop" alt="Reception at Your Clinic Name" loading="lazy"><span class="mi-tag">Reception</span></div><div class="masonry-item" data-cat="team"><img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop" alt="Consultation at Your Clinic Name" loading="lazy"><span class="mi-tag">Consultation</span></div><div class="masonry-item" data-cat="results"><img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=800&auto=format&fit=crop" alt="Implant Case at Your Clinic Name" loading="lazy"><span class="mi-tag">Implant Case</span></div><div class="masonry-item" data-cat="clinic"><img src="https://images.unsplash.com/photo-1571772996211-2f02c9727629?q=80&w=800&auto=format&fit=crop" alt="Sterilization Suite at Your Clinic Name" loading="lazy"><span class="mi-tag">Sterilization Suite</span></div>
+    </div>
+    <div class="ba-wrap reveal">
+      <img class="ba-before" src="https://images.unsplash.com/photo-1601412436405-926c25889a25?q=80&w=1200&auto=format&fit=crop" alt="Before treatment">
+      <img class="ba-after" src="https://images.unsplash.com/photo-1581585095852-6cb04e15fae8?q=80&w=1200&auto=format&fit=crop" alt="After treatment">
+      <div class="ba-handle"></div>
+      <span class="ba-label before">Before</span>
+      <span class="ba-label after">After</span>
+    </div>
+  </div>
+</section>
+<div id="lightbox"><button class="lb-close" aria-label="Close">&times;</button><img src="" alt="Enlarged gallery image"></div>
+
+<section class="section-pad" id="updates" style="background:var(--ivory-2);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">From The Clinic</div>
+      <h2>Latest Updates</h2>
+      <p>Pulled automatically from our social channels the moment we post — no one on our end
+      has to touch this page for it to stay current.</p>
+    </div>
+    <div class="updates-shell reveal">
+      <div class="updates-stage">
+        <div class="updates-media"></div>
+        <div class="updates-info">
+          <span class="src-tag">Loading…</span>
+          <h3>&nbsp;</h3>
+          <p>&nbsp;</p>
+          <div class="updates-meta"></div>
+          <a href="#" target="_blank" rel="noopener" class="btn btn-gold" style="width:fit-content;margin-top:8px;">Watch
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+          </a>
+          <div class="updates-dots"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" style="overflow:hidden;">
+  <div class="container">
+    <div class="section-head center reveal" style="margin-left:auto;margin-right:auto;">
+      <div class="eyebrow">Patient Stories</div>
+      <h2>Loved by the people we treat.</h2>
+    </div>
+  </div>
+  <div class="testi-track-wrap">
+    <div class="testi-track" id="testi-track"></div>
+  </div>
+</section>
+
+<section class="section-pad" id="contact" style="background:var(--ivory-2);">
+  <div class="container">
+    <div class="section-head center reveal">
+      <div class="eyebrow">Get In Touch</div>
+      <h2>Let's find you a time that works.</h2>
+      <p>Message us, call, or drop by — same-day appointments are usually available.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info-card glass reveal">
+        <div class="info-row">
+          <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5a2 2 0 012-2h3l2 5-2.5 1.5a11 11 0 005 5L14 12l5 2v3a2 2 0 01-2 2A16 16 0 013 5z"/></svg></div>
+          <div><h4>Phone</h4><p data-clinic-phone>+1 (555) 010-2040</p></div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <div><h4>Email</h4><p data-clinic-email>hello@yourclinicname.com</p></div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><h4>Address</h4><p data-clinic-address>48 Ridgeview Avenue, Suite 3</p></div>
+        </div>
+        <div class="quick-actions">
+          <a data-whatsapp-link href="#" target="_blank" rel="noopener" class="qa-btn whatsapp">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.6 14.3c-.2.6-1.4 1.2-2 1.3-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.2-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.3-.3.6-.4.8-.4h.6c.2 0 .5 0 .7.5l1 2.4c.1.2.1.4 0 .6l-.5.7c-.1.2-.2.4 0 .6.2.4.9 1.5 2 2.4 1.2 1 2.1 1.3 2.4 1.5.2.1.4.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l2.1 1c.2.1.4.2.4.4.1.3.1 1-.1 1.6z"/></svg>
+            WhatsApp
+          </a>
+          <a data-call-link href="#" class="qa-btn call">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5a2 2 0 012-2h3l2 5-2.5 1.5a11 11 0 005 5L14 12l5 2v3a2 2 0 01-2 2A16 16 0 013 5z"/></svg>
+            Call Now
+          </a>
+        </div>
+        <div>
+          <h4 style="font-size:13px;color:var(--ink);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;">Business Hours</h4>
+          <div class="hours-table" data-hours></div>
+        </div>
+      </div>
+
+      <div class="form-card glass reveal">
+        <h3 style="font-size:24px;color:var(--ink);margin-bottom:6px;">Request an appointment</h3>
+        <p style="color:rgba(27,36,34,.6);font-size:14px;margin-bottom:30px;">We'll confirm your slot within one business hour.</p>
+        <form id="contact-form">
+          <div class="form-row">
+            <div class="field"><label>Full Name</label><input type="text" required placeholder="Jane Doe"></div>
+            <div class="field"><label>Phone Number</label><input type="tel" required placeholder="+1 (555) 000-0000"></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label>Email</label><input type="email" required placeholder="you@email.com"></div>
+            <div class="field"><label>Preferred Service</label>
+              <select>
+                <option>Cosmetic Dentistry</option><option>Dental Implants</option><option>Orthodontics</option>
+                <option>Preventive Care</option><option>Pediatric Dentistry</option><option>Not sure yet</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label>Message</label><textarea placeholder="Tell us a bit about what you need…"></textarea></div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Request
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+          </button>
+          <p class="form-note">By submitting, you agree to be contacted about your appointment. This form is a demo — connect it to your booking system or inbox to go live.</p>
+        </form>
+      </div>
+    </div>
+    <div class="map-wrap reveal">
+      <iframe data-map-embed src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Clinic location map"></iframe>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="container">
+    <div class="cta-band reveal">
+      <h2>Ready for the healthiest version of your smile?</h2>
+      <a href="#contact" class="btn btn-gold">Book Your Visit
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#home" class="logo">
+            <svg class="logo-mark" viewBox="0 0 30 30" style="filter:invert(1)"><path d="M3 18 Q9 6 15 14 Q21 22 27 10"/></svg>
+            <span class="logo-text" style="color:var(--ivory)" data-clinic-name>Your Clinic Name</span>
+          </a>
+          <p>Precision dentistry delivered with warmth, transparency, and an obsessive attention to detail — from your first consult to your last checkup.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M14 9h3V5h-3a4 4 0 0 0-4 4v2H7v4h3v6h4v-6h3l1-4h-4V9a1 1 0 0 1 1-1z"/></svg></a>
+            <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M11 10l4 2-4 2z" fill="var(--ivory)" stroke="none"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <a href="#about">About Us</a>
+          <a href="#services">Services</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <a data-clinic-phone href="tel:">+1 (555) 010-2040</a>
+          <a data-clinic-email href="mailto:">hello@yourclinicname.com</a>
+          <p data-clinic-address>48 Ridgeview Avenue, Suite 3</p>
+        </div>
+        <div class="footer-col">
+          <h4>Stay Updated</h4>
+          <p style="margin-bottom:14px;">New availability and clinic news, once a month — never more.</p>
+          <div class="newsletter-row">
+            <input type="email" placeholder="Your email">
+            <button>Join</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 <span data-clinic-name>Your Clinic Name</span>. All rights reserved.</span>
+        <span class="footer-credit">Developed with ❤️ by <a data-dev-link href="#" target="_blank" rel="noopener"><span data-dev-name>Mohammad Ashraf</span></a></span>
+      </div>
+    </div>
+  </footer>
+
+
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script>
+/* ============== CONFIG (edit this block to rebrand the site) ============== */
+/* =====================================================================
+   YOUR CLINIC NAME — SITE CONFIGURATION
+   This is the ONLY file the business owner should ever need to touch.
+   Fill in whichever sources you actually use and leave the rest blank —
+   everything on the site (contact buttons, social links, and the
+   "Latest Updates" feed) reads from here automatically.
+   ===================================================================== */
+
+window.CLINIC_CONFIG = {
+
+  business: {
+    name: "Your Clinic Name",
+    tagline: "Precision dentistry, human care.",
+    phone: "+1 (555) 010-2040",
+    whatsapp: "15550102040",           // digits only, with country code, no + or spaces
+    email: "hello@yourclinicname.com",
+    address: "48 Ridgeview Avenue, Suite 3, Lucknow, UP",
+    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3559.5!2d80.9462!3d26.8467!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDUwJzQ4LjEiTiA4MMKwNTYnNDYuMyJF!5e0!3m2!1sen!2sin!4v1",
+    hours: [
+      { day: "Monday – Friday", time: "9:00 AM – 7:00 PM" },
+      { day: "Saturday",        time: "9:00 AM – 5:00 PM" },
+      { day: "Sunday",          time: "Closed — Emergencies only" }
+    ]
+  },
+
+  social: {
+    instagram: "yourclinicname",
+    facebook: "yourclinicname",
+    youtubeChannelId: "",   // e.g. "UCxxxxxxxxxxxxxxxxxxxxxx" — leave blank if unused
+    tiktok: "",
+    vimeoUserId: ""
+  },
+
+  /* -------------------------------------------------------------------
+     LATEST UPDATES — automatic content feed
+     Set "source" to whichever platform you actually publish to.
+     If you provide an API key, the site will fetch real, live uploads
+     and refresh automatically. If you leave sourceApiKey blank, the
+     section gracefully falls back to the sample items below so the
+     page never looks broken.
+
+     Supported source values: "youtube" | "instagram" | "facebook" |
+     "tiktok" | "vimeo" | "rss" | "sample"
+     ------------------------------------------------------------------- */
+  updates: {
+    source: "sample",          // change to "youtube" once youtubeChannelId + sourceApiKey are set
+    sourceApiKey: "",          // YouTube Data API key / equivalent token for your chosen source
+    refreshIntervalMinutes: 5,
+    maxItems: 6,
+
+    // Shown until a live source is connected — replace anytime.
+    sampleItems: [
+      {
+        title: "New Same-Day Crowns: See the Chairside Process",
+        description: "A walkthrough of our same-visit ceramic crown workflow — no temporary, no second appointment.",
+        date: "2026-07-15",
+        type: "video",
+        videoUrl: "https://cdn.coverr.co/videos/coverr-dentist-checking-teeth-1080p.mp4",
+        thumbnail: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=1200&auto=format&fit=crop",
+        watchUrl: "#"
+      },
+      {
+        title: "Meet Dr. Rao: Why We Redesigned Our Recovery Suite",
+        description: "A short tour of the new recovery lounge and the thinking behind a calmer post-procedure experience.",
+        date: "2026-07-08",
+        type: "image",
+        thumbnail: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1200&auto=format&fit=crop",
+        watchUrl: "#"
+      },
+      {
+        title: "Behind the Scenes: Digital Smile Design",
+        description: "How we simulate your final result in 3D before a single instrument touches your teeth.",
+        date: "2026-06-29",
+        type: "image",
+        thumbnail: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=1200&auto=format&fit=crop",
+        watchUrl: "#"
+      }
+    ]
+  },
+
+  /* Floating engineering credit — shown only near admin/config areas */
+  developer: {
+    name: "Mohammad Ashraf",
+    portfolio: "https://ashraf120814.github.io/My-Portfolio/"
+  }
+};
+
+</script>
+
+<script>
+/* ============== CORE SITE BEHAVIOUR ============== */
+/* ==========================================================
+   YOUR CLINIC NAME — main.js
+   Core interactivity shared across every page.
+   ========================================================== */
+(function(){
+  "use strict";
+
+  const cfg = window.CLINIC_CONFIG || {};
+
+  /* ---------- Populate config-driven content ---------- */
+  document.querySelectorAll("[data-clinic-name]").forEach(el => el.textContent = cfg.business?.name || "Your Clinic Name");
+  document.querySelectorAll("[data-clinic-tagline]").forEach(el => el.textContent = cfg.business?.tagline || "");
+  document.querySelectorAll("[data-clinic-phone]").forEach(el => { el.textContent = cfg.business?.phone || ""; if(el.tagName==="A") el.href = "tel:"+(cfg.business?.phone||"").replace(/[^+\d]/g,""); });
+  document.querySelectorAll("[data-clinic-email]").forEach(el => { el.textContent = cfg.business?.email || ""; if(el.tagName==="A") el.href = "mailto:"+(cfg.business?.email||""); });
+  document.querySelectorAll("[data-clinic-address]").forEach(el => el.textContent = cfg.business?.address || "");
+  document.querySelectorAll("[data-whatsapp-link]").forEach(el => el.href = "https://wa.me/" + (cfg.social?.whatsapp||cfg.business?.whatsapp||""));
+  document.querySelectorAll("[data-call-link]").forEach(el => el.href = "tel:" + (cfg.business?.phone||"").replace(/[^+\d]/g,""));
+  document.querySelectorAll("[data-map-embed]").forEach(el => { if(cfg.business?.mapEmbedUrl) el.src = cfg.business.mapEmbedUrl; });
+  const hoursHost = document.querySelector("[data-hours]");
+  if(hoursHost && cfg.business?.hours){
+    hoursHost.innerHTML = cfg.business.hours.map(h => `<div class="hours-row"><span>${h.day}</span><span>${h.time}</span></div>`).join("");
+  }
+  document.querySelectorAll("[data-dev-link]").forEach(el => { el.href = cfg.developer?.portfolio || "#"; });
+  document.querySelectorAll("[data-dev-name]").forEach(el => { el.textContent = cfg.developer?.name || ""; });
+
+  /* ---------- Loader ---------- */
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    if(loader){ setTimeout(() => loader.classList.add("done"), 900); }
+  });
+
+  /* ---------- Lenis smooth scroll ---------- */
+  let lenis;
+  if(window.Lenis){
+    lenis = new Lenis({ duration: 1.1, easing: t => 1 - Math.pow(1 - t, 3), smoothWheel: true });
+    function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    if(window.gsap){
+      lenis.on("scroll", ScrollTrigger && ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+    }
+  }
+
+  /* ---------- Custom cursor ---------- */
+  const dot = document.querySelector(".cursor-dot");
+  const ring = document.querySelector(".cursor-ring");
+  if(dot && ring && matchMedia("(pointer:fine)").matches){
+    let mx=0,my=0,rx=0,ry=0;
+    window.addEventListener("mousemove", e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+"px"; dot.style.top=my+"px"; });
+    (function loop(){ rx += (mx-rx)*.15; ry += (my-ry)*.15; ring.style.left=rx+"px"; ring.style.top=ry+"px"; requestAnimationFrame(loop); })();
+    document.querySelectorAll("a,button,.svc-card,.masonry-item,.udot").forEach(el=>{
+      el.addEventListener("mouseenter",()=>ring.classList.add("grow"));
+      el.addEventListener("mouseleave",()=>ring.classList.remove("grow"));
+    });
+  }
+
+  /* ---------- Magnetic buttons ---------- */
+  document.querySelectorAll(".btn, .nav-cta").forEach(btn => {
+    btn.addEventListener("mousemove", e => {
+      const r = btn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width/2, y = e.clientY - r.top - r.height/2;
+      btn.style.transform = `translate(${x*0.18}px, ${y*0.35}px)`;
+    });
+    btn.addEventListener("mouseleave", () => btn.style.transform = "translate(0,0)");
+  });
+
+  /* ---------- Nav scroll state + mobile toggle ---------- */
+  const nav = document.querySelector(".nav");
+  const onScroll = () => { if(nav) nav.classList.toggle("scrolled", window.scrollY > 40); };
+  document.addEventListener("scroll", onScroll); onScroll();
+
+  const navToggle = document.querySelector(".nav-toggle");
+  const navLinks = document.querySelector(".nav-links");
+  if(navToggle && navLinks){
+    navToggle.addEventListener("click", () => { navToggle.classList.toggle("open"); navLinks.classList.toggle("open"); });
+    navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => { navToggle.classList.remove("open"); navLinks.classList.remove("open"); }));
+  }
+
+  /* highlight active nav link via scroll-spy */
+  const navAnchors = document.querySelectorAll(".nav-links a[href^='#']");
+  const sections = Array.from(navAnchors).map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if(en.isIntersecting){
+        const id = "#" + en.target.id;
+        navAnchors.forEach(a => a.classList.toggle("active", a.getAttribute("href") === id));
+      }
+    });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  sections.forEach(s => spy.observe(s));
+
+  /* ---------- Scroll reveal ---------- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => { if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, { threshold: .15 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  /* ---------- Animated counters ---------- */
+  const counterIo = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if(!en.isIntersecting) return;
+      const el = en.target;
+      const target = parseFloat(el.dataset.count);
+      const suffix = el.dataset.suffix || "";
+      const dur = 1600, start = performance.now();
+      function tick(now){
+        const p = Math.min((now-start)/dur, 1);
+        const eased = 1 - Math.pow(1-p, 3);
+        el.textContent = (target % 1 === 0 ? Math.round(target*eased) : (target*eased).toFixed(1)) + suffix;
+        if(p<1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterIo.unobserve(el);
+    });
+  }, { threshold: .5 });
+  document.querySelectorAll("[data-count]").forEach(el => counterIo.observe(el));
+
+  /* ---------- Smile-line hero SVG draw ---------- */
+  const smilePath = document.querySelector(".smile-path.active");
+  if(smilePath){ requestAnimationFrame(() => { smilePath.style.transition = "stroke-dashoffset 2.2s cubic-bezier(.22,1,.36,1) .3s"; smilePath.style.strokeDashoffset = "0"; }); }
+
+  /* ---------- Service card expand ---------- */
+  document.querySelectorAll(".svc-card").forEach(card => {
+    card.addEventListener("click", () => card.classList.toggle("open"));
+  });
+
+  /* ---------- Gallery filter ---------- */
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  const items = document.querySelectorAll(".masonry-item");
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const f = btn.dataset.filter;
+      items.forEach(it => {
+        const match = f === "all" || it.dataset.cat === f;
+        it.classList.toggle("hide", !match);
+        if(match) setTimeout(()=>it.classList.add("show"), 30); else it.classList.remove("show");
+      });
+    });
+  });
+  items.forEach((it,i) => setTimeout(()=>it.classList.add("show"), 60*i));
+
+  /* ---------- Lightbox ---------- */
+  const lightbox = document.getElementById("lightbox");
+  if(lightbox){
+    const lbImg = lightbox.querySelector("img");
+    document.querySelectorAll(".masonry-item img").forEach(img => {
+      img.addEventListener("click", () => { lbImg.src = img.src; lightbox.classList.add("open"); });
+    });
+    lightbox.addEventListener("click", (e) => { if(e.target !== lbImg) lightbox.classList.remove("open"); });
+  }
+
+  /* ---------- Before / After slider ---------- */
+  const ba = document.querySelector(".ba-wrap");
+  if(ba){
+    const after = ba.querySelector(".ba-after");
+    const handle = ba.querySelector(".ba-handle");
+    let dragging = false;
+    const setPos = (clientX) => {
+      const r = ba.getBoundingClientRect();
+      let pct = ((clientX - r.left) / r.width) * 100;
+      pct = Math.max(2, Math.min(98, pct));
+      after.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      handle.style.left = pct + "%";
+    };
+    handle.addEventListener("mousedown", () => dragging = true);
+    window.addEventListener("mouseup", () => dragging = false);
+    window.addEventListener("mousemove", e => { if(dragging) setPos(e.clientX); });
+    handle.addEventListener("touchstart", () => dragging = true, {passive:true});
+    window.addEventListener("touchend", () => dragging = false);
+    window.addEventListener("touchmove", e => { if(dragging) setPos(e.touches[0].clientX); }, {passive:true});
+  }
+
+  /* ---------- Contact form (demo submit) ---------- */
+  const form = document.getElementById("contact-form");
+  if(form){
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const btn = form.querySelector("button[type=submit]");
+      const original = btn.textContent;
+      btn.textContent = "Sending…";
+      setTimeout(() => {
+        btn.textContent = "Request received ✓";
+        form.reset();
+        setTimeout(() => btn.textContent = original, 2600);
+      }, 900);
+    });
+  }
+
+  /* ---------- Newsletter (demo submit) ---------- */
+  const nl = document.querySelector(".newsletter-row");
+  if(nl){
+    nl.querySelector("button").addEventListener("click", () => {
+      const input = nl.querySelector("input");
+      if(!input.value) return;
+      nl.querySelector("button").textContent = "Subscribed ✓";
+      input.value = "";
+    });
+  }
+
+  /* ---------- GSAP scroll-triggered reveals (progressive enhancement) ---------- */
+  if(window.gsap && window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray(".gsap-fade").forEach(el => {
+      gsap.fromTo(el, {opacity:0, y:40}, {
+        opacity:1, y:0, duration:1, ease:"power3.out",
+        scrollTrigger:{ trigger: el, start:"top 85%" }
+      });
+    });
+    gsap.utils.toArray(".hero-photo img").forEach(img => {
+      gsap.to(img, { yPercent: -8, ease:"none", scrollTrigger:{ trigger: img, start:"top bottom", end:"bottom top", scrub:true } });
+    });
+  }
+
+  /* ---------- Ambient canvas: soft floating light orbs ---------- */
+  const canvas = document.getElementById("ambient");
+  if(canvas && canvas.getContext){
+    const ctx = canvas.getContext("2d");
+    let w,h;
+    function resize(){ w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
+    resize(); window.addEventListener("resize", resize);
+    const colors = ["198,166,100", "127,168,149", "16,60,66"];
+    const orbs = Array.from({length: 7}, () => ({
+      x: Math.random()*w, y: Math.random()*h, r: 120+Math.random()*180,
+      vx: (Math.random()-.5)*.15, vy: (Math.random()-.5)*.15, c: colors[Math.floor(Math.random()*colors.length)]
+    }));
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      orbs.forEach(o => {
+        o.x += o.vx; o.y += o.vy;
+        if(o.x < -o.r) o.x = w+o.r; if(o.x > w+o.r) o.x = -o.r;
+        if(o.y < -o.r) o.y = h+o.r; if(o.y > h+o.r) o.y = -o.r;
+        const g = ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);
+        g.addColorStop(0, `rgba(${o.c},0.10)`); g.addColorStop(1, `rgba(${o.c},0)`);
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,Math.PI*2); ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+})();
+
+</script>
+
+<script>
+/* ============== LATEST UPDATES FEED ============== */
+/* ==========================================================
+   YOUR CLINIC NAME — updates.js
+   Drives the "Latest Updates" section. Reads window.CLINIC_CONFIG.updates
+   Real APIs need a key filled into config.js — until then it runs on
+   the sample items so the section always looks complete.
+
+   To go live:
+     • YouTube  → set updates.source="youtube", social.youtubeChannelId,
+                  updates.sourceApiKey to a YouTube Data API v3 key.
+     • RSS      → set updates.source="rss" and updates.rssUrl to any
+                  blog/CMS RSS feed (fetched through a CORS-friendly proxy).
+     • Instagram / Facebook / TikTok / Vimeo follow the same pattern —
+       swap fetchYouTube() below for that platform's endpoint.
+   ========================================================== */
+(function(){
+  "use strict";
+  const stage = document.querySelector(".updates-shell");
+  if(!stage) return;
+
+  const cfg = (window.CLINIC_CONFIG && window.CLINIC_CONFIG.updates) || {};
+  const media = stage.querySelector(".updates-media");
+  const info = stage.querySelector(".updates-info");
+  const dotsHost = stage.querySelector(".updates-dots");
+
+  let items = [];
+  let idx = 0;
+  let rotateTimer = null;
+
+  async function fetchYouTube(){
+    const key = cfg.sourceApiKey;
+    const channelId = window.CLINIC_CONFIG.social?.youtubeChannelId;
+    if(!key || !channelId) return null;
+    try{
+      const url = `https://www.googleapis.com/youtube/v3/search?key=${key}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${cfg.maxItems||6}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if(!data.items) return null;
+      return data.items.filter(i => i.id.kind === "youtube#video").map(i => ({
+        title: i.snippet.title,
+        description: i.snippet.description,
+        date: i.snippet.publishedAt,
+        type: "youtube",
+        videoId: i.id.videoId,
+        thumbnail: i.snippet.thumbnails?.high?.url,
+        watchUrl: `https://www.youtube.com/watch?v=${i.id.videoId}`
+      }));
+    }catch(err){ console.warn("Live fetch failed, falling back to sample content.", err); return null; }
+  }
+
+  async function loadItems(){
+    let live = null;
+    if(cfg.source === "youtube") live = await fetchYouTube();
+    // Instagram / Facebook / TikTok / Vimeo / RSS: add a fetchX() above and call it here
+    // once the business has provided credentials in config.js.
+    items = (live && live.length) ? live : (cfg.sampleItems || []);
+    if(!items.length) return;
+    buildDots();
+    render(0);
+    startRotation();
+  }
+
+  function buildDots(){
+    dotsHost.innerHTML = items.map((_,i) => `<span class="udot${i===0?" active":""}" data-i="${i}"></span>`).join("");
+    dotsHost.querySelectorAll(".udot").forEach(d => d.addEventListener("click", () => { render(+d.dataset.i); restartRotation(); }));
+  }
+
+  function fmtDate(d){
+    try{ return new Date(d).toLocaleDateString(undefined,{ month:"short", day:"numeric", year:"numeric" }); }
+    catch(_){ return d; }
+  }
+
+  function render(i){
+    idx = i;
+    const item = items[idx];
+    if(!item) return;
+
+    media.querySelectorAll("video,img").forEach(el => el.remove());
+
+    if(item.type === "video" && item.videoUrl){
+      const v = document.createElement("video");
+      v.src = item.videoUrl; v.autoplay = true; v.muted = true; v.loop = true; v.playsInline = true;
+      v.poster = item.thumbnail || "";
+      media.appendChild(v);
+      requestAnimationFrame(() => v.classList.add("show"));
+    } else if(item.type === "youtube" && item.videoId){
+      const wrap = document.createElement("img"); // thumbnail w/ play badge; click-through opens YouTube
+      wrap.src = item.thumbnail; wrap.alt = item.title;
+      media.appendChild(wrap);
+      requestAnimationFrame(() => wrap.classList.add("show"));
+    } else {
+      const img = document.createElement("img");
+      img.src = item.thumbnail; img.alt = item.title; img.loading = "lazy";
+      media.appendChild(img);
+      requestAnimationFrame(() => img.classList.add("show"));
+    }
+
+    let badge = media.querySelector(".play-badge");
+    if(!badge){ badge = document.createElement("div"); badge.className = "play-badge"; badge.innerHTML = `<span class="live-dot"></span> Latest`; media.appendChild(badge); }
+
+    info.querySelector(".src-tag").textContent = (cfg.source === "sample" ? "Sample feed — connect a source in config.js" : cfg.source);
+    info.querySelector("h3").textContent = item.title;
+    info.querySelector("p").textContent = item.description || "";
+    info.querySelector(".updates-meta").innerHTML = `<span>${fmtDate(item.date)}</span><span>${idx+1} / ${items.length}</span>`;
+    const watchBtn = info.querySelector(".btn");
+    if(watchBtn) watchBtn.href = item.watchUrl || "#";
+
+    dotsHost.querySelectorAll(".udot").forEach((d,n) => d.classList.toggle("active", n === idx));
+  }
+
+  function startRotation(){
+    rotateTimer = setInterval(() => render((idx+1) % items.length), 6000);
+  }
+  function restartRotation(){ clearInterval(rotateTimer); startRotation(); }
+
+  loadItems();
+
+  // Auto-refresh from the live source periodically without any code changes.
+  const mins = cfg.refreshIntervalMinutes || 5;
+  setInterval(loadItems, mins * 60 * 1000);
+
+})();
+
+</script>
+
+<script>
+/* ============== TESTIMONIALS + LIGHTBOX WIRE-UP ============== */
+
+const TESTIMONIALS = [
+  {name:"Priya Malhotra", role:"Patient since 2021", quote:"The most relaxed I have ever felt at a dentist. They explained every step before touching anything.", img:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop"},
+  {name:"Arjun Sethi", role:"Implant patient", quote:"My implant procedure was done in a single visit, exactly as planned. Zero surprises, zero pain.", img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"},
+  {name:"Neha Kapoor", role:"Invisalign patient", quote:"Eighteen months of tracked, painless aligner therapy. The 3D scans made it easy to see the plan.", img:"https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"},
+  {name:"Rohan Verma", role:"Cosmetic veneers", quote:"They designed my veneers around my face, not a catalogue. It looks completely natural.", img:"https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=200&auto=format&fit=crop"},
+  {name:"Fatima Ansari", role:"Family patient", quote:"Both my kids actually look forward to their checkups now. That alone is worth the switch.", img:"https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=200&auto=format&fit=crop"},
+];
+function starIcons(){ return Array.from({length:5}).map(()=>`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.1 6.3 6.9 1-5 4.9L18.2 21 12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>`).join("");
+}
+function testiCard(t){
+  return `<div class="testi-card glass">
+    <div class="testi-stars">${starIcons()}</div>
+    <p>${t.quote}</p>
+    <div class="testi-person">
+      <img src="${t.img}" alt="${t.name}">
+      <div><b>${t.name}</b><span>${t.role}</span></div>
+    </div>
+  </div>`;
+}
+document.getElementById("testi-track").innerHTML = TESTIMONIALS.map(testiCard).join("") + TESTIMONIALS.map(testiCard).join("");
+
+document.querySelector(".lb-close")?.addEventListener("click", () => document.getElementById("lightbox").classList.remove("open"));
+
+</script>
+
+</body>
+</html>
